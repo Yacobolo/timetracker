@@ -1,4 +1,6 @@
 # Simple Makefile for a Go project
+include .env
+export $(shell sed 's/=.*//' .env)
 
 # Build the application
 all: build test
@@ -57,5 +59,24 @@ watch:
                 exit 1; \
             fi; \
         fi
+
+
+# Database stuff 
+
+db-status:
+	@GOOSE_DRIVER=sqlite3 GOOSE_DBSTRING=$(DB_URL) goose -dir=$(MIGRATIONS_DIR) status
+
+up:
+	@GOOSE_DRIVER=sqlite3 GOOSE_DBSTRING=$(DB_URL) goose -dir=$(MIGRATIONS_DIR) up
+
+down:
+	@GOOSE_DRIVER=sqlite3 GOOSE_DBSTRING=$(DB_URL) goose -dir=$(MIGRATIONS_DIR) down
+
+reset:
+	@GOOSE_DRIVER=sqlite3 GOOSE_DBSTRING=$(DB_URL) goose -dir=$(MIGRATIONS_DIR) reset
+
+migration:
+	@read -p "Enter migration name: " migration_name; \
+	goose -dir=$(MIGRATIONS_DIR) -s create $$migration_name sql
 
 .PHONY: all build run test clean watch tailwind templ-install

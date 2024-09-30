@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"net/http"
-	"timetracker/internal/views/errors"
+	"timetracker/internal/templates/errors"
 )
 
 func HandleHomeIndex(w http.ResponseWriter, r *http.Request) error {
