@@ -13,15 +13,14 @@ import (
 
 const createTimeEntry = `-- name: CreateTimeEntry :one
 INSERT INTO time_entries (
-  user_id, project_id, start_time, end_time, description
+  project_id, start_time, end_time, description
 ) VALUES (
-  ?, ?, ?, ?, ?
+  ?, ?, ?, ?
 )
-RETURNING id, user_id, project_id, start_time, end_time, duration, description, created_at, updated_at
+RETURNING id, project_id, start_time, end_time, duration, description, created_at, updated_at
 `
 
 type CreateTimeEntryParams struct {
-	UserID      int64
 	ProjectID   int64
 	StartTime   time.Time
 	EndTime     time.Time
@@ -30,7 +29,6 @@ type CreateTimeEntryParams struct {
 
 func (q *Queries) CreateTimeEntry(ctx context.Context, arg CreateTimeEntryParams) (TimeEntry, error) {
 	row := q.db.QueryRowContext(ctx, createTimeEntry,
-		arg.UserID,
 		arg.ProjectID,
 		arg.StartTime,
 		arg.EndTime,
@@ -39,7 +37,6 @@ func (q *Queries) CreateTimeEntry(ctx context.Context, arg CreateTimeEntryParams
 	var i TimeEntry
 	err := row.Scan(
 		&i.ID,
-		&i.UserID,
 		&i.ProjectID,
 		&i.StartTime,
 		&i.EndTime,
@@ -62,7 +59,7 @@ func (q *Queries) DeleteTimeEntry(ctx context.Context, id int64) error {
 }
 
 const getTimeEntry = `-- name: GetTimeEntry :one
-SELECT id, user_id, project_id, start_time, end_time, duration, description, created_at, updated_at FROM time_entries
+SELECT id, project_id, start_time, end_time, duration, description, created_at, updated_at FROM time_entries
 WHERE id = ? LIMIT 1
 `
 
@@ -71,7 +68,6 @@ func (q *Queries) GetTimeEntry(ctx context.Context, id int64) (TimeEntry, error)
 	var i TimeEntry
 	err := row.Scan(
 		&i.ID,
-		&i.UserID,
 		&i.ProjectID,
 		&i.StartTime,
 		&i.EndTime,
@@ -84,7 +80,7 @@ func (q *Queries) GetTimeEntry(ctx context.Context, id int64) (TimeEntry, error)
 }
 
 const listTimeEntries = `-- name: ListTimeEntries :many
-SELECT id, user_id, project_id, start_time, end_time, duration, description, created_at, updated_at FROM time_entries
+SELECT id, project_id, start_time, end_time, duration, description, created_at, updated_at FROM time_entries
 ORDER BY start_time
 `
 
@@ -99,7 +95,6 @@ func (q *Queries) ListTimeEntries(ctx context.Context) ([]TimeEntry, error) {
 		var i TimeEntry
 		if err := rows.Scan(
 			&i.ID,
-			&i.UserID,
 			&i.ProjectID,
 			&i.StartTime,
 			&i.EndTime,

@@ -13,14 +13,12 @@ type Project struct {
 	ID          int64
 	Name        string
 	Description sql.NullString
-	CreatedBy   int64
 	CreatedAt   sql.NullTime
 	UpdatedAt   sql.NullTime
 }
 
 type TimeEntry struct {
 	ID          int64
-	UserID      int64
 	ProjectID   int64
 	StartTime   time.Time
 	EndTime     time.Time

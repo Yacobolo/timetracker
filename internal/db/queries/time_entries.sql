@@ -8,9 +8,9 @@ ORDER BY start_time;
 
 -- name: CreateTimeEntry :one
 INSERT INTO time_entries (
-  user_id, project_id, start_time, end_time, description
+  project_id, start_time, end_time, description
 ) VALUES (
-  ?, ?, ?, ?, ?
+  ?, ?, ?, ?
 )
 RETURNING *;
 

@@ -6,7 +6,7 @@ var (
 
 templ BaseLayout() {
 	<!DOCTYPE html>
-	<html lang="en">
+	<html lang="en" class="h-full bg-gray-50">
 		<head>
 			<title>{ title }</title>
 			<link rel="icon" type="image/x-icon" href="/public/favicon.ico"/>
@@ -14,11 +14,12 @@ templ BaseLayout() {
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
             <link href="static/css/output.css" rel="stylesheet"/>
 			<script src="static/js/htmx.min.js"></script>
+        	<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 		</head>
-		<body>
-			<main>
+		<body class="h-full">
+			@Appshell() {
 				{ children... }
-			</main>
+			}
 		</body>
 	</html>
 }

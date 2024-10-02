@@ -12,27 +12,25 @@ import (
 
 const createProject = `-- name: CreateProject :one
 INSERT INTO projects (
-  name, description, created_by
+  name, description
 ) VALUES (
-  ?, ?, ?
+  ?, ?
 )
-RETURNING id, name, description, created_by, created_at, updated_at
+RETURNING id, name, description, created_at, updated_at
 `
 
 type CreateProjectParams struct {
 	Name        string
 	Description sql.NullString
-	CreatedBy   int64
 }
 
 func (q *Queries) CreateProject(ctx context.Context, arg CreateProjectParams) (Project, error) {
-	row := q.db.QueryRowContext(ctx, createProject, arg.Name, arg.Description, arg.CreatedBy)
+	row := q.db.QueryRowContext(ctx, createProject, arg.Name, arg.Description)
 	var i Project
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
 		&i.Description,
-		&i.CreatedBy,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -50,7 +48,7 @@ func (q *Queries) DeleteProject(ctx context.Context, id int64) error {
 }
 
 const getProject = `-- name: GetProject :one
-SELECT id, name, description, created_by, created_at, updated_at FROM projects
+SELECT id, name, description, created_at, updated_at FROM projects
 WHERE id = ? LIMIT 1
 `
 
@@ -61,7 +59,6 @@ func (q *Queries) GetProject(ctx context.Context, id int64) (Project, error) {
 		&i.ID,
 		&i.Name,
 		&i.Description,
-		&i.CreatedBy,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -69,7 +66,7 @@ func (q *Queries) GetProject(ctx context.Context, id int64) (Project, error) {
 }
 
 const listProjects = `-- name: ListProjects :many
-SELECT id, name, description, created_by, created_at, updated_at FROM projects
+SELECT id, name, description, created_at, updated_at FROM projects
 ORDER BY name
 `
 
@@ -86,7 +83,6 @@ func (q *Queries) ListProjects(ctx context.Context) ([]Project, error) {
 			&i.ID,
 			&i.Name,
 			&i.Description,
-			&i.CreatedBy,
 			&i.CreatedAt,
 			&i.UpdatedAt,
 		); err != nil {

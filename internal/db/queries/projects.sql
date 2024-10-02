@@ -8,9 +8,9 @@ ORDER BY name;
 
 -- name: CreateProject :one
 INSERT INTO projects (
-  name, description, created_by
+  name, description
 ) VALUES (
-  ?, ?, ?
+  ?, ?
 )
 RETURNING *;
 

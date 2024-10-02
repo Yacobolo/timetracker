@@ -1,0 +1,60 @@
+package components
+
+import (
+	"timetracker/internal/db"
+	"timetracker/internal/templates/layouts"
+)
+
+templ Table(projects []db.Project) {
+	@layouts.BaseLayout() {
+		<div class="px-4 sm:px-6 lg:px-8">
+			<div class="sm:flex sm:items-center">
+				<div class="sm:flex-auto">
+					<h1 class="text-base font-semibold leading-6 text-gray-900">Projects</h1>
+					<p class="mt-2 text-sm text-gray-700">List of all projects</p>
+				</div>
+				@Modaltest()
+			</div>
+			<div class="mt-8 flow-root">
+				<div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+					<div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+						<div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+							<table class="min-w-full divide-y divide-gray-300">
+								@Columns([]string{"Project Name"})
+								<tbody class="divide-y divide-gray-200 bg-white">
+									for _, project := range projects {
+										@Row([]string{project.Name})
+									}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	}
+}
+
+templ Columns(colums []string) {
+	<thead class="bg-gray-50">
+		<tr>
+			for _, col := range colums {
+				<th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{ col }</th>
+			}
+			<th>
+				<span class="sr-only">Edit</span>
+			</th>
+		</tr>
+	</thead>
+}
+
+templ Row(data []string) {
+	<tr>
+		for _, d := range data {
+			<td class="px-3 py-4 text-sm text-gray-500">{ d }</td>
+		}
+		<td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+			<a href="#" class="text-indigo-600 hover:text-indigo-900">Edit<span class="sr-only">, { data[0] }</span></a>
+		</td>
+	</tr>
+}
