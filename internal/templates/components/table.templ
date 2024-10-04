@@ -21,7 +21,7 @@ templ Table(tbl table.Table) {
 						<div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
 							<table class="min-w-full divide-y divide-gray-300">
 								@Columns(tbl.Columns)
-								<tbody class="divide-y divide-gray-200 bg-white">
+								<tbody id="table-body" class="divide-y divide-gray-200 bg-white">
 									for _, row := range tbl.Rows {
 										@Row(row.Values)
 									}

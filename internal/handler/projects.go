@@ -53,16 +53,22 @@ func (h *ProjectHandler) HandleProjectSubmit(w http.ResponseWriter, r *http.Requ
 	// Validate the form input
 	if err := h.validator.Struct(input); err != nil {
 		log.Printf("Validation failed: %v", err)
-		return nil
+		return AddNotificationHeaders(w, "Faild to create project", "error")
 	}
 
 	project, err := h.service.CreateProject(r.Context(), input)
 	if err != nil {
 		return err
 	}
+
 	row, err := table.NewRowFromStruct(project)
 
 	if err != nil {
+		return err
+	}
+
+	// Add success notification
+	if err := AddNotificationHeaders(w, "Created project successfully", "success"); err != nil {
 		return err
 	}
 
