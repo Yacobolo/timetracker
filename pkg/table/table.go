@@ -61,3 +61,27 @@ func NewTableFromStructs(data interface{}) (Table, error) {
 
 	return table, nil
 }
+
+func NewRowFromStruct(data interface{}) (Row, error) {
+	val := reflect.ValueOf(data)
+
+	// Check if the input is a struct
+	if val.Kind() != reflect.Struct {
+		return Row{}, fmt.Errorf("invalid input: expected a struct, got %s", val.Kind())
+	}
+
+	numFields := val.NumField() // Store number of fields for reuse
+
+	// Initialize RowData with pre-allocated capacity for Values
+	row := Row{
+		Values: make([]string, numFields),
+	}
+
+	// Extract values from struct fields
+	for i := 0; i < numFields; i++ {
+		field := val.Field(i)
+		row.Values[i] = fmt.Sprintf("%v", field.Interface()) // Handle any field type
+	}
+
+	return row, nil
+}
