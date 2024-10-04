@@ -53,7 +53,7 @@ func (h *ProjectHandler) HandleProjectSubmit(w http.ResponseWriter, r *http.Requ
 	// Validate the form input
 	if err := h.validator.Struct(input); err != nil {
 		log.Printf("Validation failed: %v", err)
-		return AddNotificationHeaders(w, "Faild to create project", "error")
+		return AddHxNotificationTrigger(w, "Faild to create project", "error")
 	}
 
 	project, err := h.service.CreateProject(r.Context(), input)
@@ -68,7 +68,11 @@ func (h *ProjectHandler) HandleProjectSubmit(w http.ResponseWriter, r *http.Requ
 	}
 
 	// Add success notification
-	if err := AddNotificationHeaders(w, "Created project successfully", "success"); err != nil {
+	if err := AddHxNotificationTrigger(w, "Created project successfully", "success"); err != nil {
+		return err
+	}
+
+	if err := AddHxTrigger(w, "close-modal", nil); err != nil {
 		return err
 	}
 

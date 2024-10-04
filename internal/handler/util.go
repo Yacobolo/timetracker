@@ -12,8 +12,8 @@ type Notification struct {
 	Type    string `json:"type"`
 }
 
-// AddNotificationHeaders adds a custom 'hx-trigger' header to the HTTP response for triggering a notification.
-func AddNotificationHeaders(w http.ResponseWriter, notificationContent, notificationType string) error {
+// AddHxNotificationTrigger adds or extends a notification in the 'hx-trigger' header of the HTTP response.
+func AddHxNotificationTrigger(w http.ResponseWriter, notificationContent, notificationType string) error {
 	allowedTypes := map[string]bool{
 		"info":    true,
 		"success": true,
@@ -25,22 +25,47 @@ func AddNotificationHeaders(w http.ResponseWriter, notificationContent, notifica
 		return fmt.Errorf("invalid notification type: %s. allowed types are info, success, error", notificationType)
 	}
 
-	// Create notification data
-	notificationData := map[string]Notification{
-		"notify": {
-			Content: notificationContent,
-			Type:    notificationType,
-		},
+	// Create new notification data
+	newNotification := Notification{
+		Content: notificationContent,
+		Type:    notificationType,
 	}
 
-	// Convert notification data to JSON
-	notificationJSON, err := json.Marshal(notificationData)
+	// Use the helper function to add/extend the 'notify' event in the 'hx-trigger' header
+	return AddHxTrigger(w, "notify", newNotification)
+}
+
+// AddHxTrigger adds or extends any event (e.g., notification, modal trigger) in the 'hx-trigger' header of the HTTP response.
+func AddHxTrigger(w http.ResponseWriter, eventKey string, eventData interface{}) error {
+	// Check if hx-trigger header already exists
+	existingTrigger := w.Header().Get("hx-trigger")
+
+	// Initialize a map to hold the hx-trigger data
+	hxTriggerMap := map[string]interface{}{}
+
+	// If the hx-trigger header already exists, try to unmarshal it into hxTriggerMap
+	if existingTrigger != "" {
+		if err := json.Unmarshal([]byte(existingTrigger), &hxTriggerMap); err != nil {
+			return fmt.Errorf("failed to unmarshal existing hx-trigger: %v", err)
+		}
+	}
+
+	// Handle empty eventData by assigning an empty map to result in {} in JSON
+	if eventData == nil {
+		eventData = map[string]interface{}{}
+	}
+
+	// Add or update the event in the hxTriggerMap
+	hxTriggerMap[eventKey] = eventData
+
+	// Convert the updated map back to JSON
+	updatedHxTriggerJSON, err := json.Marshal(hxTriggerMap)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to marshal updated hx-trigger: %v", err)
 	}
 
-	// Add the custom header
-	w.Header().Set("hx-trigger", string(notificationJSON))
+	// Set the updated hx-trigger header
+	w.Header().Set("hx-trigger", string(updatedHxTriggerJSON))
 
 	return nil
 }

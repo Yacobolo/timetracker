@@ -52,6 +52,7 @@ templ Modaltest() {
 			x-show="open"
 			style="display: none"
 			x-on:keydown.escape.prevent.stop="open = false"
+			x-on:close-modal.window="open = false"
 			role="dialog"
 			aria-modal="true"
 			x-id="['modal-title']"
