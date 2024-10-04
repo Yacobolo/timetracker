@@ -1,20 +1,23 @@
 package handler
 
 import (
-	"database/sql"
 	"log"
 	"net/http"
-	"timetracker/internal/db"
+	"timetracker/internal/dto"
 	"timetracker/internal/service"
 	"timetracker/internal/templates/components"
+	"timetracker/pkg/table"
+
+	"github.com/go-playground/validator/v10"
 )
 
 type ProjectHandler struct {
-	service service.ProjectService
+	service   service.ProjectService
+	validator *validator.Validate
 }
 
-func NewProjectHandler(service service.ProjectService) *ProjectHandler {
-	return &ProjectHandler{service: service}
+func NewProjectHandler(service service.ProjectService, validator *validator.Validate) *ProjectHandler {
+	return &ProjectHandler{service: service, validator: validator}
 }
 
 func (h *ProjectHandler) RenderProjectList(w http.ResponseWriter, r *http.Request) error {
@@ -24,22 +27,45 @@ func (h *ProjectHandler) RenderProjectList(w http.ResponseWriter, r *http.Reques
 		return err
 	}
 
-	return components.Table(projects).Render(r.Context(), w)
+	projects_table, err := table.NewTableFromStructs(projects)
+	if err != nil {
+		return err
+	}
+
+	return components.Table(projects_table).Render(r.Context(), w)
 }
 
 func (h *ProjectHandler) HandleProjectSubmit(w http.ResponseWriter, r *http.Request) error {
+	// Parse the form values
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Unable to parse form", http.StatusBadRequest)
+		return err
+	}
+
 	// log form values
 	log.Printf("Form values: %v", r.PostForm)
 
-	params := db.CreateProjectParams{
+	input := dto.ProjectIn{
 		Name:        r.PostFormValue("Project Name"),
-		Description: sql.NullString{String: r.PostFormValue("Description"), Valid: true},
+		Description: r.PostFormValue("Description"),
 	}
 
-	project, err := h.service.CreateProject(r.Context(), params)
-	if err == nil {
-		log.Printf("Created project: %v", project)
+	// Validate the form input
+	if err := h.validator.Struct(input); err != nil {
+		log.Printf("Validation failed: %v", err)
+		return nil
 	}
-	return err
+
+	project, err := h.service.CreateProject(r.Context(), input)
+	if err != nil {
+		return err
+	}
+	row, err := table.NewRowFromStruct(project)
+
+	if err != nil {
+		return err
+	}
+
+	return components.Row(row.Values).Render(r.Context(), w)
 
 }

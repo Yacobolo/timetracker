@@ -11,6 +11,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-playground/validator/v10"
 )
 
 func main() {
@@ -26,8 +27,11 @@ func main() {
 	// services
 	projectService := service.NewProjectService(projectRepo)
 
+	// Initialize a validator instance
+	var validate = validator.New()
+
 	// handlers
-	projectHandler := handler.NewProjectHandler(projectService)
+	projectHandler := handler.NewProjectHandler(projectService, validate)
 
 	// router
 	r := chi.NewRouter()

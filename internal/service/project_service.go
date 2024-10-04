@@ -3,14 +3,15 @@ package service
 import (
 	"context"
 	"timetracker/internal/db"
+	"timetracker/internal/dto"
 	"timetracker/internal/repository"
 )
 
 type ProjectService interface {
-	CreateProject(ctx context.Context, params db.CreateProjectParams) (db.Project, error)
+	CreateProject(ctx context.Context, input dto.ProjectIn) (dto.ProjectOut, error)
 	DeleteProject(ctx context.Context, id int64) error
 	GetProject(ctx context.Context, id int64) (db.Project, error)
-	ListProjects(ctx context.Context) ([]db.Project, error)
+	ListProjects(ctx context.Context) ([]dto.ProjectOut, error)
 }
 
 type projectService struct {
@@ -21,8 +22,27 @@ func NewProjectService(repo repository.ProjectRepository) ProjectService {
 	return &projectService{repo: repo}
 }
 
-func (s *projectService) CreateProject(ctx context.Context, params db.CreateProjectParams) (db.Project, error) {
-	return s.repo.CreateProject(ctx, params)
+type ProjectInput struct {
+	Name        string
+	Description string
+}
+
+func (s *projectService) CreateProject(ctx context.Context, input dto.ProjectIn) (dto.ProjectOut, error) {
+
+	createParams := db.CreateProjectParams{
+		Name:        input.Name,
+		Description: input.Description,
+	}
+	project, err := s.repo.CreateProject(ctx, createParams)
+
+	if err != nil {
+		return dto.ProjectOut{}, err
+	}
+
+	// Convert the project to
+	projectDTO := dto.ToProjectOutDTO(project)
+
+	return projectDTO, nil
 }
 
 func (s *projectService) DeleteProject(ctx context.Context, id int64) error {
@@ -33,6 +53,19 @@ func (s *projectService) GetProject(ctx context.Context, id int64) (db.Project, 
 	return s.repo.GetProject(ctx, id)
 }
 
-func (s *projectService) ListProjects(ctx context.Context) ([]db.Project, error) {
-	return s.repo.ListProjects(ctx)
+func (s *projectService) ListProjects(ctx context.Context) ([]dto.ProjectOut, error) {
+	projectList, err := s.repo.ListProjects(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// Pre-allocate the response slice to avoid multiple allocations
+	output := make([]dto.ProjectOut, len(projectList))
+
+	// Loop over the projectList and convert each project to a CreateProjectResponse
+	for i, project := range projectList {
+		output[i] = dto.ToProjectOutDTO(project)
+	}
+
+	return output, nil
 }
