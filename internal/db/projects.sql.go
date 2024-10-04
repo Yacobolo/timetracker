@@ -7,7 +7,6 @@ package db
 
 import (
 	"context"
-	"database/sql"
 )
 
 const createProject = `-- name: CreateProject :one
@@ -21,7 +20,7 @@ RETURNING id, name, description, created_at, updated_at
 
 type CreateProjectParams struct {
 	Name        string
-	Description sql.NullString
+	Description string
 }
 
 func (q *Queries) CreateProject(ctx context.Context, arg CreateProjectParams) (Project, error) {
@@ -108,7 +107,7 @@ WHERE id = ?
 
 type UpdateProjectParams struct {
 	Name        string
-	Description sql.NullString
+	Description string
 	ID          int64
 }
 

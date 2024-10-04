@@ -12,9 +12,9 @@ import (
 type Project struct {
 	ID          int64
 	Name        string
-	Description sql.NullString
-	CreatedAt   sql.NullTime
-	UpdatedAt   sql.NullTime
+	Description string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 type TimeEntry struct {
@@ -23,9 +23,9 @@ type TimeEntry struct {
 	StartTime   time.Time
 	EndTime     time.Time
 	Duration    sql.NullInt64
-	Description sql.NullString
-	CreatedAt   sql.NullTime
-	UpdatedAt   sql.NullTime
+	Description string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 type User struct {
@@ -33,6 +33,6 @@ type User struct {
 	Username     string
 	Email        string
 	PasswordHash string
-	CreatedAt    sql.NullTime
-	UpdatedAt    sql.NullTime
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
 }

@@ -7,7 +7,6 @@ package db
 
 import (
 	"context"
-	"database/sql"
 	"time"
 )
 
@@ -24,7 +23,7 @@ type CreateTimeEntryParams struct {
 	ProjectID   int64
 	StartTime   time.Time
 	EndTime     time.Time
-	Description sql.NullString
+	Description string
 }
 
 func (q *Queries) CreateTimeEntry(ctx context.Context, arg CreateTimeEntryParams) (TimeEntry, error) {
@@ -127,7 +126,7 @@ WHERE id = ?
 type UpdateTimeEntryParams struct {
 	StartTime   time.Time
 	EndTime     time.Time
-	Description sql.NullString
+	Description string
 	ID          int64
 }
 
