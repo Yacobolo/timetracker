@@ -8,8 +8,8 @@ import (
 // convert dto to db model
 
 type ProjectIn struct {
-	Name        string `form:"name" validate:"required"`
-	Description string `form:"description"`
+	Name        string `json:"name" validate:"required"`
+	Description string `json:"description"`
 }
 
 type ProjectOut struct {

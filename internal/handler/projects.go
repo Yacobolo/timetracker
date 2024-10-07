@@ -1,8 +1,11 @@
 package handler
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"strings"
+	"timetracker/internal/config"
 	"timetracker/internal/dto"
 	"timetracker/internal/service"
 	"timetracker/internal/templates/components"
@@ -35,6 +38,11 @@ func (h *ProjectHandler) RenderProjectList(w http.ResponseWriter, r *http.Reques
 	return components.Table(projects_table).Render(r.Context(), w)
 }
 
+func (h *ProjectHandler) RenderProjectForm(w http.ResponseWriter, r *http.Request) error {
+	input_fields := BuildInputFields(*config.ProjectFieldConfigManager, []FieldError{})
+	return components.ModalForm(input_fields).Render(r.Context(), w)
+}
+
 func (h *ProjectHandler) HandleProjectSubmit(w http.ResponseWriter, r *http.Request) error {
 	// Parse the form values
 	if err := r.ParseForm(); err != nil {
@@ -46,18 +54,35 @@ func (h *ProjectHandler) HandleProjectSubmit(w http.ResponseWriter, r *http.Requ
 	log.Printf("Form values: %v", r.PostForm)
 
 	input := dto.ProjectIn{
-		Name:        r.PostFormValue("Project Name"),
-		Description: r.PostFormValue("Description"),
+		Name:        r.PostFormValue("name"),
+		Description: r.PostFormValue("description"),
 	}
 
 	// Validate the form input
 	if err := h.validator.Struct(input); err != nil {
-		log.Printf("Validation failed: %v", err)
-		return AddHxNotificationTrigger(w, "Faild to create project", "error")
+
+		fmt.Println("Validation error")
+		var field_errors []FieldError // Correctly declare the slice
+		for _, err := range err.(validator.ValidationErrors) {
+			field_id := strings.ToLower(err.Field())
+			errorMsg := CustomErrorMessage(err)
+			field_errors = append(field_errors, FieldError{FieldID: field_id, Error: errorMsg})
+
+		}
+
+		input_fields := BuildInputFields(*config.ProjectFieldConfigManager, field_errors)
+		return components.ModalForm(input_fields).Render(r.Context(), w)
 	}
 
+	// Create the project
 	project, err := h.service.CreateProject(r.Context(), input)
 	if err != nil {
+
+		if handled := handleSQLiteError(err, config.ProjectFieldConfigManager); handled != nil {
+			input_fields := BuildInputFields(*config.ProjectFieldConfigManager, handled)
+			return components.ModalForm(input_fields).Render(r.Context(), w)
+
+		}
 		return err
 	}
 
@@ -76,6 +101,6 @@ func (h *ProjectHandler) HandleProjectSubmit(w http.ResponseWriter, r *http.Requ
 		return err
 	}
 
-	return components.Row(row.Values).Render(r.Context(), w)
+	return components.HxRow(row.Values).Render(r.Context(), w)
 
 }

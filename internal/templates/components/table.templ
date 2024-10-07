@@ -13,13 +13,16 @@ templ Table(tbl table.Table) {
 					<h1 class="text-base font-semibold leading-6 text-gray-900">Projects</h1>
 					<p class="mt-2 text-sm text-gray-700">List of all projects</p>
 				</div>
-				@Modaltest()
+				@Modal()
 			</div>
 			<div class="mt-8 flow-root">
 				<div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
 					<div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
 						<div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
-							<table class="min-w-full divide-y divide-gray-300">
+							<table
+								id="table"
+								class="min-w-full divide-y divide-gray-300"
+							>
 								@Columns(tbl.Columns)
 								<tbody id="table-body" class="divide-y divide-gray-200 bg-white">
 									for _, row := range tbl.Rows {
@@ -57,4 +60,12 @@ templ Row(values []string) {
 			<a href="#" class="text-indigo-600 hover:text-indigo-900">Edit<span class="sr-only">, { values[0] }</span></a>
 		</td>
 	</tr>
+}
+
+templ HxRow(values []string) {
+	<tbody hx-swap-oob="afterbegin:#table tbody">
+		<tr>
+			@Row(values)
+		</tr>
+	</tbody>
 }

@@ -43,6 +43,7 @@ func main() {
 	r.Get("/", handler.Make(handler.RenderHomeIndex))
 	r.Get("/projects", handler.Make(projectHandler.RenderProjectList))
 	r.Post("/projects", handler.Make(projectHandler.HandleProjectSubmit))
+	r.Get("/project-form", handler.Make(projectHandler.RenderProjectForm))
 
 	// start server
 	server := server.NewServer(database, r)
