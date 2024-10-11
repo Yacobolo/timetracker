@@ -15,14 +15,17 @@ import (
 )
 
 func main() {
-	// database connection
-	database := db.NewService()
+	// database_service connection
+	dbService := db.NewService()
 
-	queries := db.New(database.GetDB())
+	dbConn := dbService.GetDB()
+
+	// queries instance from sqlc
+	queries := db.New(dbConn)
 
 	// Initialize repositories
 
-	projectRepo := repository.NewProjectRepository(queries)
+	projectRepo := repository.NewProjectRepository(dbConn, queries)
 
 	// services
 	projectService := service.NewProjectService(projectRepo)
@@ -42,11 +45,11 @@ func main() {
 
 	r.Get("/", handler.Make(handler.RenderHomeIndex))
 	r.Get("/projects", handler.Make(projectHandler.RenderProjectList))
+	r.Get("/projects/new", handler.Make(projectHandler.RenderProjectForm))
 	r.Post("/projects", handler.Make(projectHandler.HandleProjectSubmit))
-	r.Get("/project-form", handler.Make(projectHandler.RenderProjectForm))
 
 	// start server
-	server := server.NewServer(database, r)
+	server := server.NewServer(dbService, r)
 
 	err := server.ListenAndServe()
 	if err != nil {

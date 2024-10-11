@@ -1,11 +1,11 @@
 package db
 
 import (
-	"database/sql"
 	"log"
 	"os"
 	"time"
 
+	"github.com/jmoiron/sqlx"
 	_ "github.com/joho/godotenv/autoload"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -16,11 +16,11 @@ type Service interface {
 	Close() error
 
 	// GetDB returns the database connection to be used by SQLC queries.
-	GetDB() *sql.DB
+	GetDB() *sqlx.DB
 }
 
 type service struct {
-	db *sql.DB
+	db *sqlx.DB
 }
 
 var (
@@ -34,10 +34,7 @@ func NewService() Service {
 		return dbInstance
 	}
 
-	db, err := sql.Open("sqlite3", dburl)
-	if err != nil {
-		log.Fatal(err)
-	}
+	db := sqlx.MustOpen("sqlite3", dburl)
 
 	// Optional: Set connection pooling parameters
 	db.SetMaxOpenConns(50)
@@ -51,7 +48,7 @@ func NewService() Service {
 }
 
 // GetDB provides access to the underlying DB object for SQLC queries.
-func (s *service) GetDB() *sql.DB {
+func (s *service) GetDB() *sqlx.DB {
 	return s.db
 }
 

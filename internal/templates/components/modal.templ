@@ -3,7 +3,7 @@ package components
 templ Modal() {
 	<div x-data="{ open: false }" class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
 		<!-- Trigger -->
-		<span x-on:click="open = true" hx-get="/project-form" hx-target="#modal-form">
+		<span x-on:click="open = true" hx-get="/projects/new" hx-target="#modal-form">
 			@ButtonPrimary("Add Project")
 		</span>
 		<!-- Modal -->

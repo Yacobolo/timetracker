@@ -9,6 +9,7 @@ import (
 	"timetracker/internal/dto"
 	"timetracker/internal/service"
 	"timetracker/internal/templates/components"
+	"timetracker/internal/templates/pages"
 	"timetracker/pkg/table"
 
 	"github.com/go-playground/validator/v10"
@@ -24,7 +25,15 @@ func NewProjectHandler(service service.ProjectService, validator *validator.Vali
 }
 
 func (h *ProjectHandler) RenderProjectList(w http.ResponseWriter, r *http.Request) error {
-	projects, err := h.service.ListProjects(r.Context())
+	sortBy := r.URL.Query().Get("sort")
+	sortOrder := r.URL.Query().Get("order")
+
+	if sortBy == "" {
+		sortBy = "created_at" // default field to sort by
+		sortOrder = "desc"
+	}
+
+	projects, err := h.service.ListProjects(r.Context(), sortBy, sortOrder)
 
 	if err != nil {
 		return err
@@ -35,7 +44,12 @@ func (h *ProjectHandler) RenderProjectList(w http.ResponseWriter, r *http.Reques
 		return err
 	}
 
-	return components.Table(projects_table).Render(r.Context(), w)
+	if r.Header.Get("Hx-Request") == "true" && r.Header.Get("Hx-Target") == "table" {
+		fmt.Println("Table trigger")
+		return components.Table(projects_table, sortBy, sortOrder).Render(r.Context(), w)
+	}
+
+	return pages.ListPage(projects_table, sortBy, sortOrder).Render(r.Context(), w)
 }
 
 func (h *ProjectHandler) RenderProjectForm(w http.ResponseWriter, r *http.Request) error {

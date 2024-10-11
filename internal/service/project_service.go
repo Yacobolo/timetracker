@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"timetracker/internal/db"
+	queries "timetracker/internal/db/queries/dynamic"
 	"timetracker/internal/dto"
 	"timetracker/internal/repository"
 )
@@ -11,7 +12,7 @@ type ProjectService interface {
 	CreateProject(ctx context.Context, input dto.ProjectIn) (dto.ProjectOut, error)
 	DeleteProject(ctx context.Context, id int64) error
 	GetProject(ctx context.Context, id int64) (db.Project, error)
-	ListProjects(ctx context.Context) ([]dto.ProjectOut, error)
+	ListProjects(ctx context.Context, sortBy string, sortOrder string) ([]db.Project, error)
 }
 
 type projectService struct {
@@ -53,19 +54,19 @@ func (s *projectService) GetProject(ctx context.Context, id int64) (db.Project, 
 	return s.repo.GetProject(ctx, id)
 }
 
-func (s *projectService) ListProjects(ctx context.Context) ([]dto.ProjectOut, error) {
-	projectList, err := s.repo.ListProjects(ctx)
+func (s *projectService) ListProjects(ctx context.Context, sortBy string, sortOrder string) ([]db.Project, error) {
+
+	opts := queries.ProjectListQueryOpts{
+		SortBy:    sortBy,
+		SortOrder: sortOrder,
+		Limit:     0,
+		Offset:    0,
+	}
+
+	projectList, err := s.repo.ListProjects(ctx, opts)
 	if err != nil {
 		return nil, err
 	}
 
-	// Pre-allocate the response slice to avoid multiple allocations
-	output := make([]dto.ProjectOut, len(projectList))
-
-	// Loop over the projectList and convert each project to a CreateProjectResponse
-	for i, project := range projectList {
-		output[i] = dto.ToProjectOutDTO(project)
-	}
-
-	return output, nil
+	return projectList, nil
 }

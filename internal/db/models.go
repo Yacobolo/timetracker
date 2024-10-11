@@ -10,29 +10,29 @@ import (
 )
 
 type Project struct {
-	ID          int64
-	Name        string
-	Description string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	ID          int64     `db:"id" json:"id"`
+	Name        string    `db:"name" json:"name"`
+	Description string    `db:"description" json:"description"`
+	CreatedAt   time.Time `db:"created_at" json:"created_at"`
+	UpdatedAt   time.Time `db:"updated_at" json:"updated_at"`
 }
 
 type TimeEntry struct {
-	ID          int64
-	ProjectID   int64
-	StartTime   time.Time
-	EndTime     time.Time
-	Duration    sql.NullInt64
-	Description string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	ID          int64         `db:"id" json:"id"`
+	ProjectID   int64         `db:"project_id" json:"project_id"`
+	StartTime   time.Time     `db:"start_time" json:"start_time"`
+	EndTime     time.Time     `db:"end_time" json:"end_time"`
+	Duration    sql.NullInt64 `db:"duration" json:"duration"`
+	Description string        `db:"description" json:"description"`
+	CreatedAt   time.Time     `db:"created_at" json:"created_at"`
+	UpdatedAt   time.Time     `db:"updated_at" json:"updated_at"`
 }
 
 type User struct {
-	ID           int64
-	Username     string
-	Email        string
-	PasswordHash string
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
+	ID           int64     `db:"id" json:"id"`
+	Username     string    `db:"username" json:"username"`
+	Email        string    `db:"email" json:"email"`
+	PasswordHash string    `db:"password_hash" json:"password_hash"`
+	CreatedAt    time.Time `db:"created_at" json:"created_at"`
+	UpdatedAt    time.Time `db:"updated_at" json:"updated_at"`
 }

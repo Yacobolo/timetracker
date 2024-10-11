@@ -19,9 +19,9 @@ RETURNING id, username, email, password_hash, created_at, updated_at
 `
 
 type CreateUserParams struct {
-	Username     string `db:"username" json:"username"`
-	Email        string `db:"email" json:"email"`
-	PasswordHash string `db:"password_hash" json:"password_hash"`
+	Username     string `db:"username"`
+	Email        string `db:"email"`
+	PasswordHash string `db:"password_hash"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
@@ -111,10 +111,10 @@ WHERE id = ?
 `
 
 type UpdateUserParams struct {
-	Username     string `db:"username" json:"username"`
-	Email        string `db:"email" json:"email"`
-	PasswordHash string `db:"password_hash" json:"password_hash"`
-	ID           int64  `db:"id" json:"id"`
+	Username     string `db:"username"`
+	Email        string `db:"email"`
+	PasswordHash string `db:"password_hash"`
+	ID           int64  `db:"id"`
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {

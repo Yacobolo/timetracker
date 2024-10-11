@@ -19,8 +19,8 @@ RETURNING id, name, description, created_at, updated_at
 `
 
 type CreateProjectParams struct {
-	Name        string `db:"name" json:"name"`
-	Description string `db:"description" json:"description"`
+	Name        string `db:"name"`
+	Description string `db:"description"`
 }
 
 func (q *Queries) CreateProject(ctx context.Context, arg CreateProjectParams) (Project, error) {
@@ -106,9 +106,9 @@ WHERE id = ?
 `
 
 type UpdateProjectParams struct {
-	Name        string `db:"name" json:"name"`
-	Description string `db:"description" json:"description"`
-	ID          int64  `db:"id" json:"id"`
+	Name        string `db:"name"`
+	Description string `db:"description"`
+	ID          int64  `db:"id"`
 }
 
 func (q *Queries) UpdateProject(ctx context.Context, arg UpdateProjectParams) error {

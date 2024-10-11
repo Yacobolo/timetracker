@@ -1,0 +1,30 @@
+package pages
+
+import (
+	"timetracker/internal/templates/components"
+	"timetracker/internal/templates/layouts"
+	"timetracker/pkg/table"
+)
+
+templ ListPage(tbl table.Table, sort string, order string) {
+	@layouts.BaseLayout() {
+		<div class="px-4 sm:px-6 lg:px-8">
+			<div class="sm:flex sm:items-center">
+				<div class="sm:flex-auto">
+					<h1 class="text-base font-semibold leading-6 text-gray-900">Projects</h1>
+					<p class="mt-2 text-sm text-gray-700">List of all projects</p>
+				</div>
+				@components.Modal()
+			</div>
+			<div class="mt-8 flow-root">
+				<div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+					<div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+						<div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+							@components.Table(tbl, sort, order)
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	}
+}

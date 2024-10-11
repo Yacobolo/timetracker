@@ -20,10 +20,10 @@ RETURNING id, project_id, start_time, end_time, duration, description, created_a
 `
 
 type CreateTimeEntryParams struct {
-	ProjectID   int64     `db:"project_id" json:"project_id"`
-	StartTime   time.Time `db:"start_time" json:"start_time"`
-	EndTime     time.Time `db:"end_time" json:"end_time"`
-	Description string    `db:"description" json:"description"`
+	ProjectID   int64     `db:"project_id"`
+	StartTime   time.Time `db:"start_time"`
+	EndTime     time.Time `db:"end_time"`
+	Description string    `db:"description"`
 }
 
 func (q *Queries) CreateTimeEntry(ctx context.Context, arg CreateTimeEntryParams) (TimeEntry, error) {
@@ -124,10 +124,10 @@ WHERE id = ?
 `
 
 type UpdateTimeEntryParams struct {
-	StartTime   time.Time `db:"start_time" json:"start_time"`
-	EndTime     time.Time `db:"end_time" json:"end_time"`
-	Description string    `db:"description" json:"description"`
-	ID          int64     `db:"id" json:"id"`
+	StartTime   time.Time `db:"start_time"`
+	EndTime     time.Time `db:"end_time"`
+	Description string    `db:"description"`
+	ID          int64     `db:"id"`
 }
 
 func (q *Queries) UpdateTimeEntry(ctx context.Context, arg UpdateTimeEntryParams) error {

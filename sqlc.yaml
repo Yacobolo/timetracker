@@ -4,9 +4,10 @@ sql:
     schema:
       - "internal/db/migrations/"
     queries:
-      - "internal/db/queries/"
+      - "internal/db/queries/static/"
     gen:
       go:
         package: "db"
-        out: "internal/db"
+        out: "internal/db/gen"
+        emit_db_tags: true
         sql_package: "database/sql"

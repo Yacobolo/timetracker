@@ -6,8 +6,13 @@ import (
 )
 
 type Table struct {
-	Columns []string
+	Columns []Column
 	Rows    []Row
+}
+
+type Column struct {
+	ID    string
+	Label string
 }
 
 type Row struct {
@@ -37,13 +42,27 @@ func NewTableFromStructs(data interface{}) (Table, error) {
 
 	// Initialize TableData with pre-allocated capacity for Rows
 	table := Table{
-		Columns: make([]string, numFields),
+		Columns: make([]Column, numFields),
 		Rows:    make([]Row, 0, val.Len()),
 	}
 
-	// Extract column names from struct field names
+	// Extract column names from struct field tags or names
 	for i := 0; i < numFields; i++ {
-		table.Columns[i] = elemType.Field(i).Name
+		field := elemType.Field(i)
+		dbTag := field.Tag.Get("db")
+
+		// Use the db tag as the column ID if available, otherwise use the field name
+		columnID := field.Name
+		if dbTag != "" {
+			columnID = dbTag
+		}
+
+		column := Column{
+			ID:    columnID,
+			Label: field.Name, // You can change how the label is set if needed
+		}
+
+		table.Columns[i] = column
 	}
 
 	// Extract row values from each struct
