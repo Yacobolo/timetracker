@@ -1,13 +1,13 @@
 -- name: GetProject :one
-SELECT * FROM projects
+SELECT * FROM project
 WHERE id = ? LIMIT 1;
 
 -- name: ListProjects :many
-SELECT * FROM projects
+SELECT * FROM project
 ORDER BY name;
 
 -- name: CreateProject :one
-INSERT INTO projects (
+INSERT INTO project (
   name, description
 ) VALUES (
   ?, ?
@@ -15,11 +15,11 @@ INSERT INTO projects (
 RETURNING *;
 
 -- name: UpdateProject :exec
-UPDATE projects
+UPDATE project
 SET name = ?,
 description = ?
 WHERE id = ?;
 
 -- name: DeleteProject :exec
-DELETE FROM projects
+DELETE FROM project
 WHERE id = ?;

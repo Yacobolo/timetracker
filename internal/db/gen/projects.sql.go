@@ -10,7 +10,7 @@ import (
 )
 
 const createProject = `-- name: CreateProject :one
-INSERT INTO projects (
+INSERT INTO project (
   name, description
 ) VALUES (
   ?, ?
@@ -37,7 +37,7 @@ func (q *Queries) CreateProject(ctx context.Context, arg CreateProjectParams) (P
 }
 
 const deleteProject = `-- name: DeleteProject :exec
-DELETE FROM projects
+DELETE FROM project
 WHERE id = ?
 `
 
@@ -47,7 +47,7 @@ func (q *Queries) DeleteProject(ctx context.Context, id int64) error {
 }
 
 const getProject = `-- name: GetProject :one
-SELECT id, name, description, created_at, updated_at FROM projects
+SELECT id, name, description, created_at, updated_at FROM project
 WHERE id = ? LIMIT 1
 `
 
@@ -65,7 +65,7 @@ func (q *Queries) GetProject(ctx context.Context, id int64) (Project, error) {
 }
 
 const listProjects = `-- name: ListProjects :many
-SELECT id, name, description, created_at, updated_at FROM projects
+SELECT id, name, description, created_at, updated_at FROM project
 ORDER BY name
 `
 
@@ -99,7 +99,7 @@ func (q *Queries) ListProjects(ctx context.Context) ([]Project, error) {
 }
 
 const updateProject = `-- name: UpdateProject :exec
-UPDATE projects
+UPDATE project
 SET name = ?,
 description = ?
 WHERE id = ?

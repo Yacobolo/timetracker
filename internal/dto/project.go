@@ -36,3 +36,11 @@ func ToProjectOutDTO(model db.Project) ProjectOut {
 		UpdatedAt:   model.UpdatedAt.Format("2006-01-02 15:04:05"),
 	}
 }
+
+type TimeEntryIn struct {
+	ID          string `validate:"required"`
+	ProjectID   string
+	StartTime   string `validate:"required"`
+	EndTime     string `validate:"required"`
+	Description string `validate:"required"`
+}

@@ -23,11 +23,6 @@ func NewProjectService(repo repository.ProjectRepository) ProjectService {
 	return &projectService{repo: repo}
 }
 
-type ProjectInput struct {
-	Name        string
-	Description string
-}
-
 func (s *projectService) CreateProject(ctx context.Context, input dto.ProjectIn) (dto.ProjectOut, error) {
 
 	createParams := db.CreateProjectParams{

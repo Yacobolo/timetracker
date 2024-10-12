@@ -1,13 +1,13 @@
 -- name: GetUser :one
-SELECT * FROM users
+SELECT * FROM user
 WHERE id = ? LIMIT 1;
 
--- name: ListUsers :many
-SELECT * FROM users
+-- name: ListUser :many
+SELECT * FROM user
 ORDER BY username;
 
--- name: CreateUser :one
-INSERT INTO users (
+-- name: CreateUsers :one
+INSERT INTO user (
   username, email, password_hash
 ) VALUES (
   ?, ?, ?
@@ -15,12 +15,12 @@ INSERT INTO users (
 RETURNING *;
 
 -- name: UpdateUser :exec
-UPDATE users
+UPDATE user
 SET username = ?,
 email = ?,
 password_hash = ?
 WHERE id = ?;
 
 -- name: DeleteUser :exec
-DELETE FROM users
+DELETE FROM user
 WHERE id = ?;

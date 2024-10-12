@@ -1,0 +1,32 @@
+package layouts
+
+templ Tooltip() {
+	<style>
+  /* Custom theme for Tippy.js */
+  .tippy-box[data-theme~='my-custom-theme'] {
+    background-color: rgb(118, 118, 118);
+    color: white ; 
+  }
+    </style>
+	<script>
+    document.addEventListener('alpine:init', () => {
+        // Magic: $tooltip
+        Alpine.magic('tooltip', el => message => {
+            let instance = tippy(el, { content: message, trigger: 'manual', placement: 'bottom', arrow: false, theme: 'my-custom-theme' })
+
+            instance.show()
+
+            setTimeout(() => {
+                instance.hide()
+
+                setTimeout(() => instance.destroy(), 150)
+            }, 2000)
+        })
+
+        // Directive: x-tooltip
+        Alpine.directive('tooltip', (el, { expression }) => {
+            tippy(el, { content: expression, placement: 'bottom', arrow: false, theme: 'my-custom-theme' })
+        })
+    })
+    </script>
+}
