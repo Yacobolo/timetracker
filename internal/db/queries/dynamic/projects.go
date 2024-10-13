@@ -6,7 +6,9 @@ import (
 
 // BuildBaseProjectQuery creates the base query for project CRUD operations.
 func BuildBaseProjectQuery() squirrel.SelectBuilder {
-	return squirrel.Select("id", "name", "description", "created_at").From("projects")
+	psql := squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar)
+
+	return psql.Select("id", "name", "description", "created_at").From("project")
 }
 
 type ProjectListQueryOpts struct {

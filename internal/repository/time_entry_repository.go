@@ -4,7 +4,7 @@ import (
 	"context"
 	"timetracker/internal/db"
 
-	"github.com/jmoiron/sqlx"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type TimeEntryRepository interface {
@@ -15,11 +15,11 @@ type TimeEntryRepository interface {
 }
 
 type timeEntryRepository struct {
-	db      *sqlx.DB
+	db      *pgxpool.Pool
 	queries *db.Queries
 }
 
-func NewTimeEntryRepository(db *sqlx.DB, queries *db.Queries) TimeEntryRepository {
+func NewTimeEntryRepository(db *pgxpool.Pool, queries *db.Queries) TimeEntryRepository {
 	return &timeEntryRepository{db: db, queries: queries}
 }
 

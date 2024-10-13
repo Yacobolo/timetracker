@@ -49,6 +49,8 @@ func (h *ProjectHandler) RenderProjectList(w http.ResponseWriter, r *http.Reques
 		return components.Table(projects_table, sortBy, sortOrder).Render(r.Context(), w)
 	}
 
+	// print projects
+	log.Printf("Projects: %v", projects)
 	return pages.ListPage(projects_table, sortBy, sortOrder).Render(r.Context(), w)
 }
 

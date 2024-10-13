@@ -5,7 +5,9 @@ import (
 	"timetracker/internal/db"
 	queries "timetracker/internal/db/queries/dynamic"
 
-	"github.com/jmoiron/sqlx"
+	"github.com/georgysavva/scany/v2/pgxscan"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type ProjectRepository interface {
@@ -16,11 +18,11 @@ type ProjectRepository interface {
 }
 
 type projectRepository struct {
-	db      *sqlx.DB
+	db      *pgxpool.Pool
 	queries *db.Queries
 }
 
-func NewProjectRepository(db *sqlx.DB, queries *db.Queries) ProjectRepository {
+func NewProjectRepository(db *pgxpool.Pool, queries *db.Queries) ProjectRepository {
 	return &projectRepository{db: db, queries: queries}
 }
 
@@ -48,10 +50,7 @@ func (r *projectRepository) ListProjects(ctx context.Context, opts queries.Proje
 
 	// Execute the query and map results to the projects slice
 	var projects []db.Project
-	err = r.db.SelectContext(ctx, &projects, sql, args...)
-	if err != nil {
-		return nil, err
-	}
+	pgxscan.Select(ctx, r.db, &projects, sql, args...)
 
 	return projects, nil
 }
