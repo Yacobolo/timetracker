@@ -10,8 +10,8 @@ import (
 
 type ProjectRepository interface {
 	CreateProject(ctx context.Context, params db.CreateProjectParams) (db.Project, error)
-	DeleteProject(ctx context.Context, id int64) error
-	GetProject(ctx context.Context, id int64) (db.Project, error)
+	DeleteProject(ctx context.Context, id int32) error
+	GetProject(ctx context.Context, id int32) (db.Project, error)
 	ListProjects(ctx context.Context, params queries.ProjectListQueryOpts) ([]db.Project, error)
 }
 
@@ -28,11 +28,11 @@ func (r *projectRepository) CreateProject(ctx context.Context, params db.CreateP
 	return r.queries.CreateProject(ctx, params)
 }
 
-func (r *projectRepository) DeleteProject(ctx context.Context, id int64) error {
+func (r *projectRepository) DeleteProject(ctx context.Context, id int32) error {
 	return r.queries.DeleteProject(ctx, id)
 }
 
-func (r *projectRepository) GetProject(ctx context.Context, id int64) (db.Project, error) {
+func (r *projectRepository) GetProject(ctx context.Context, id int32) (db.Project, error) {
 	return r.queries.GetProject(ctx, id)
 }
 

@@ -1,7 +1,7 @@
 package dto
 
 import (
-	"strconv"
+	"fmt"
 	"timetracker/internal/db"
 )
 
@@ -29,11 +29,11 @@ func ProjectInToDB(model ProjectIn) db.CreateProjectParams {
 
 func ToProjectOutDTO(model db.Project) ProjectOut {
 	return ProjectOut{
-		ID:          strconv.FormatInt(model.ID, 10),
+		ID:          fmt.Sprintf("%d", model.ID),
 		Name:        model.Name,
 		Description: model.Description,
-		CreatedAt:   model.CreatedAt.Format("2006-01-02 15:04:05"),
-		UpdatedAt:   model.UpdatedAt.Format("2006-01-02 15:04:05"),
+		CreatedAt:   model.CreatedAt.Time.Format("2006-01-02 15:04:05"),
+		UpdatedAt:   model.UpdatedAt.Time.Format("2006-01-02 15:04:05"),
 	}
 }
 

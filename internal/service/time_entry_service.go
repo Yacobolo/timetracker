@@ -8,8 +8,8 @@ import (
 
 type TimeEntryService interface {
 	CreateTimeEntry(ctx context.Context, input db.CreateTimeEntryParams) (db.TimeEntry, error)
-	DeleteTimeEntry(ctx context.Context, id int64) error
-	GetTimeEntry(ctx context.Context, id int64) (db.TimeEntry, error)
+	DeleteTimeEntry(ctx context.Context, id int32) error
+	GetTimeEntry(ctx context.Context, id int32) (db.TimeEntry, error)
 	ListTimeEntries(ctx context.Context) ([]db.TimeEntry, error)
 }
 
@@ -32,11 +32,11 @@ func (s *timeEntryService) CreateTimeEntry(ctx context.Context, input db.CreateT
 	return timeEntry, nil
 }
 
-func (s *timeEntryService) DeleteTimeEntry(ctx context.Context, id int64) error {
+func (s *timeEntryService) DeleteTimeEntry(ctx context.Context, id int32) error {
 	return s.repo.DeleteTimeEntry(ctx, id)
 }
 
-func (s *timeEntryService) GetTimeEntry(ctx context.Context, id int64) (db.TimeEntry, error) {
+func (s *timeEntryService) GetTimeEntry(ctx context.Context, id int32) (db.TimeEntry, error) {
 	return s.repo.GetTimeEntry(ctx, id)
 }
 

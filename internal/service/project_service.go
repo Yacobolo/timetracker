@@ -10,8 +10,8 @@ import (
 
 type ProjectService interface {
 	CreateProject(ctx context.Context, input dto.ProjectIn) (dto.ProjectOut, error)
-	DeleteProject(ctx context.Context, id int64) error
-	GetProject(ctx context.Context, id int64) (db.Project, error)
+	DeleteProject(ctx context.Context, id int32) error
+	GetProject(ctx context.Context, id int32) (db.Project, error)
 	ListProjects(ctx context.Context, sortBy string, sortOrder string) ([]db.Project, error)
 }
 
@@ -41,11 +41,11 @@ func (s *projectService) CreateProject(ctx context.Context, input dto.ProjectIn)
 	return projectDTO, nil
 }
 
-func (s *projectService) DeleteProject(ctx context.Context, id int64) error {
+func (s *projectService) DeleteProject(ctx context.Context, id int32) error {
 	return s.repo.DeleteProject(ctx, id)
 }
 
-func (s *projectService) GetProject(ctx context.Context, id int64) (db.Project, error) {
+func (s *projectService) GetProject(ctx context.Context, id int32) (db.Project, error) {
 	return s.repo.GetProject(ctx, id)
 }
 

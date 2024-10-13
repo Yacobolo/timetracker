@@ -5,34 +5,34 @@
 package db
 
 import (
-	"database/sql"
-	"time"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Project struct {
-	ID          int64     `db:"id" json:"id"`
-	Name        string    `db:"name" json:"name"`
-	Description string    `db:"description" json:"description"`
-	CreatedAt   time.Time `db:"created_at" json:"created_at"`
-	UpdatedAt   time.Time `db:"updated_at" json:"updated_at"`
+	ID          int32            `db:"id"`
+	Name        string           `db:"name"`
+	Description string           `db:"description"`
+	CreatedAt   pgtype.Timestamp `db:"created_at"`
+	UpdatedAt   pgtype.Timestamp `db:"updated_at"`
 }
 
 type TimeEntry struct {
-	ID          int64         `db:"id" json:"id"`
-	ProjectID   int64         `db:"project_id" json:"project_id"`
-	StartTime   time.Time     `db:"start_time" json:"start_time"`
-	EndTime     time.Time     `db:"end_time" json:"end_time"`
-	Duration    sql.NullInt64 `db:"duration" json:"duration"`
-	Description string        `db:"description" json:"description"`
-	CreatedAt   time.Time     `db:"created_at" json:"created_at"`
-	UpdatedAt   time.Time     `db:"updated_at" json:"updated_at"`
+	ID          int32            `db:"id"`
+	ProjectID   int32            `db:"project_id"`
+	StartTime   pgtype.Timestamp `db:"start_time"`
+	EndTime     pgtype.Timestamp `db:"end_time"`
+	Duration    pgtype.Int4      `db:"duration"`
+	Description string           `db:"description"`
+	CreatedAt   pgtype.Timestamp `db:"created_at"`
+	UpdatedAt   pgtype.Timestamp `db:"updated_at"`
 }
 
 type User struct {
-	ID           int64     `db:"id" json:"id"`
-	Username     string    `db:"username" json:"username"`
-	Email        string    `db:"email" json:"email"`
-	PasswordHash string    `db:"password_hash" json:"password_hash"`
-	CreatedAt    time.Time `db:"created_at" json:"created_at"`
-	UpdatedAt    time.Time `db:"updated_at" json:"updated_at"`
+	ID             int32            `db:"id"`
+	Provider       string           `db:"provider"`
+	ProviderUserID string           `db:"provider_user_id"`
+	Email          string           `db:"email"`
+	ProfilePicture pgtype.Text      `db:"profile_picture"`
+	CreatedAt      pgtype.Timestamp `db:"created_at"`
+	UpdatedAt      pgtype.Timestamp `db:"updated_at"`
 }

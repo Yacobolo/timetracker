@@ -1,6 +1,6 @@
 version: "2"
 sql:
-  - engine: "sqlite"
+  - engine: "postgresql"
     schema:
       - "internal/db/migrations/"
     queries:
@@ -8,6 +8,6 @@ sql:
     gen:
       go:
         package: "db"
-        out: "internal/db/gen"
+        out: "internal/db"
         emit_db_tags: true
-        sql_package: "database/sql"
+        sql_package: "pgx/v5"
