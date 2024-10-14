@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"timetracker/internal/auth"
+	"timetracker/internal/config"
 	"timetracker/internal/db"
 	"timetracker/internal/handler"
 	"timetracker/internal/repository"
@@ -16,9 +18,17 @@ import (
 
 func main() {
 	// database_service connection
-	dbService := db.NewService()
-
+	dbService := db.NewService(config.Config.DSN)
 	dbConn := dbService.GetDB()
+
+	sessionStore := auth.NewFileSystemStore(auth.SessionOptions{
+		CookiesKey: config.Config.CookiesAuthSecret,
+		MaxAge:     config.Config.CookiesAuthAgeInSeconds,
+		Secure:     config.Config.CookiesAuthIsSecure,
+		HttpOnly:   config.Config.CookiesAuthIsHttpOnly,
+	})
+
+	auth.NewAuthService(sessionStore)
 
 	// queries instance from sqlc
 	queries := db.New(dbConn)
@@ -40,22 +50,38 @@ func main() {
 
 	// router
 	r := chi.NewRouter()
+
+	// Middleware for logging
 	r.Use(middleware.Logger)
 
+	// Static files (no auth required)
 	fileServer := http.FileServer(http.Dir("./static"))
 	r.Handle("/static/*", http.StripPrefix("/static/", fileServer))
 
-	// Projects
-	r.Get("/", handler.Make(handler.RenderHomeIndex))
-	r.Get("/projects", handler.Make(projectHandler.RenderProjectList))
-	r.Get("/projects/new", handler.Make(projectHandler.RenderProjectForm))
-	r.Post("/projects", handler.Make(projectHandler.HandleProjectSubmit))
+	// Public routes (no authentication required)
+	r.Group(func(public chi.Router) {
+		public.Get("/auth/login", handler.Make(handler.HandleLoginPage))
+		public.Get("/auth/{provider}", handler.Make(handler.HandleProviderLogin))
+		public.Get("/auth/{provider}/callback", handler.Make(handler.HandleAuthCallbackFunction))
+		public.Get("/auth/logout", handler.Make(handler.HandleLogout))
+	})
 
-	// Time Entries
-	r.Get("/timer", handler.Make(timeEntryHandler.RenderTimeEntryIndex))
+	// Protected routes (authentication required)
+	r.Group(func(protected chi.Router) {
+		protected.Use(auth.RequireAuth) // Apply RequireAuth middleware to these routes
+
+		// Home and Projects
+		protected.Get("/", handler.Make(handler.RenderHomeIndex))
+		protected.Get("/projects", handler.Make(projectHandler.RenderProjectList))
+		protected.Get("/projects/new", handler.Make(projectHandler.RenderProjectForm))
+		protected.Post("/projects", handler.Make(projectHandler.HandleProjectSubmit))
+
+		// Time Entries
+		protected.Get("/timer", handler.Make(timeEntryHandler.RenderTimeEntryIndex))
+	})
 
 	// start server
-	server := server.NewServer(dbService, r)
+	server := server.NewServer(r, config.Config.Port)
 
 	err := server.ListenAndServe()
 	if err != nil {

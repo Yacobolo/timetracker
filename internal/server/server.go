@@ -3,27 +3,18 @@ package server
 import (
 	"fmt"
 	"net/http"
-	"os"
-	"strconv"
 	"time"
 
 	_ "github.com/joho/godotenv/autoload"
-
-	"timetracker/internal/db"
 )
 
 type Server struct {
 	port int
-
-	db db.Service
 }
 
-func NewServer(dbService db.Service, router http.Handler) *http.Server {
-	port, _ := strconv.Atoi(os.Getenv("PORT"))
+func NewServer(router http.Handler, port int) *http.Server {
 	NewServer := &Server{
 		port: port,
-
-		db: dbService,
 	}
 
 	// Declare Server config
